@@ -10,8 +10,35 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model user {
-  id    Int     @id @default(autoincrement())
-  email String
-  name  String?
+model User {
+  id      Int      @id @default(autoincrement())
+  email   String   @unique
+  profile profile?
+  posts   post[]
+
+  @@map("users")
+}
+
+model profile {
+  id     Int     @id @default(autoincrement())
+  bio    String
+  name   String?
+  mobile String?
+  userId Int     @unique
+  user   User    @relation(fields: [userId], references: [id])
+}
+
+model post {
+  id         Int      @id @default(autoincrement())
+  content    String
+  userId     Int
+  user       User     @relation(fields: [userId], references: [id])
+  categoryId Int      @unique
+  category   category @relation(fields: [categoryId], references: [id])
+}
+
+model category {
+  id       Int    @id
+  category String
+  post     post?
 }
